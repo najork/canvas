@@ -5,8 +5,6 @@
         <style type="text/css">
             html, body { overflow: hidden; background-color:black; }
 
-            #like { position:absolute; left:10%; top: 10%; width:70%; }
-
             #pos_x { position:absolute; left:10%; top: 10%; width:20%; font-size: 3em; font-family: arial; color: white; text-shadow: 0 0 0.3em white; }
             #pos_y { position:absolute; left:10%; top: 25%; width:20%; font-size: 3em; font-family: arial; color: white; text-shadow: 0 0 0.3em white; }
             #pos_z { position:absolute; left:70%; top: 10%; width:20%; font-size: 3em; font-family: arial; color: white; text-shadow: 0 0 0.3em white; }
@@ -19,11 +17,7 @@
     </head>
 
     <body>
-        <div id="border"></div>
-        <img id="like" src="images/like.png"/>
-        <div id="pos_x"></div>
-        <div id="pos_y"></div>
-        <div id="pos_z"></div>
+        <canvas id="myCanvas"></canvas>
 
         <script>
 
@@ -47,13 +41,20 @@
                 $("#border").show().delay(2000).fadeOut(500);
             }
 
+            var c = document.getElementBy("myCanvas");
+            var ctx = c.getContext("2d");
+
             // Number of frames that the hand has been in place
             var iFrameCount = 0;
 
-            // Coordinates of hand in frame
+            // Coordinates of hand in frame, range is [0,1]
             var avg_pos_x = -1;
             var avg_pos_y = -1;
             var avg_pos_z = -1;
+
+            // Pixel coordinate values of hand in frame
+            var pixel_x = -1;
+            var pixel_y = -1;
 
             /**
              * @brief Compute the average of a set of points
@@ -79,13 +80,30 @@
                 // If we have more than 40 points, print coordinates
                 if (pointList.length > 40) {
                         avg_pos_x = comp_avg(pointList, 0).toPrecision(3);
-                        $("#pos_x").text("x: " + avg_pos_x);
+                        // $("#pos_x").text("x: " + avg_pos_x);
                         avg_pos_y = comp_avg(pointList, 1).toPrecision(3);
-                        $("#pos_y").text("y: " + avg_pos_y);
+                        // $("#pos_y").text("y: " + avg_pos_y);
                         avg_pos_z = comp_avg(pointList, 2).toPrecision(3);
-                        $("#pos_z").text("z: " + avg_pos_z);
+                        // $("#pos_z").text("z: " + avg_pos_z);
+
+                        // Draw a circle on the screen where interaction occurred
+                        pixel_x = avg_pos_x * Convert_M2P(Surface.Width);
+                        pixel_y = avg_pos_y * Convert_M2P(Surface.Height);
+                        drawCircle(pixel_x, pixel_y);
                 }
             }
+
+            /**
+             * @brief Draws a circle at the given x and y pixel coordinates
+             * @param x the x coordinate for the pixel to center the circle on
+             * @param y the y coordinate for the pixel to center the circle on
+             */
+            function drawCircle(x, y) {
+                ctx.beginPath();
+                ctx.arc(x, y, 5, 0, 2*Math.PI);
+                ctx.stroke();
+            }
+
         </script>
 
     </body>
