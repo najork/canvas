@@ -17,6 +17,7 @@
     </head>
 
     <body>
+		<div id="pos_x"></div>
         <canvas id="myCanvas"></canvas>
 
         <script>
@@ -80,15 +81,15 @@
                 // If we have more than 40 points, print coordinates
                 if (pointList.length > 40) {
                         avg_pos_x = comp_avg(pointList, 0).toPrecision(3);
-                        // $("#pos_x").text("x: " + avg_pos_x);
+                         $("#pos_x").text("x: " + avg_pos_x);
                         avg_pos_y = comp_avg(pointList, 1).toPrecision(3);
-                        // $("#pos_y").text("y: " + avg_pos_y);
+                         $("#pos_y").text("y: " + avg_pos_y);
                         avg_pos_z = comp_avg(pointList, 2).toPrecision(3);
-                        // $("#pos_z").text("z: " + avg_pos_z);
+                         $("#pos_z").text("z: " + avg_pos_z);
 
                         // Draw a circle on the screen where interaction occurred
-                        pixel_x = avg_pos_x * Convert_M2P(Surface.Width);
-                        pixel_y = avg_pos_y * Convert_M2P(Surface.Height);
+                        pixel_x = avg_pos_x * Convert_M2P(Surface.Width, w);
+                        pixel_y = avg_pos_y * Convert_M2P(Surface.Height, h);
                         drawCircle(pixel_x, pixel_y);
                 }
             }
@@ -100,7 +101,8 @@
              */
             function drawCircle(x, y) {
                 ctx.beginPath();
-                ctx.arc(x, y, 5, 0, 2*Math.PI);
+                ctx.arc(x, y, 100, 0, 2*Math.PI);
+				ctx.strokeStyle = '#ff0000';
                 ctx.stroke();
             }
 
