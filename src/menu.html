@@ -1,0 +1,73 @@
+<html>
+    <head>
+        <title></title>
+        <style type="text/css">
+            body {
+                margin: 0 auto;
+                padding: 0;
+            }
+            .menu {
+                width: 1000px;
+                height: 400px;
+                display: none;
+            }
+            .menu .row {
+                height: 100px;
+                margin-bottom: 5px;
+            }
+            .menu .row .color {
+                width: 150px;
+                height: 100%;
+                display: inline-block;
+                margin: 5px;
+            }
+        </style>
+    </head>
+    <body>
+        <button>Menu</button>
+        <div class="menu">
+            <div class="row">
+                <div class="color" style="background: #1abc9c;"></div>
+                <div class="color" style="background: #2ecc71;"></div>
+                <div class="color" style="background: #3498db;"></div>
+                <div class="color" style="background: #9b59b6;"></div>
+                <div class="color" style="background: #34495e;"></div>
+            </div>
+            <div class="row">
+                <div class="color" style="background: #16a085;"></div>
+                <div class="color" style="background: #27ae60;"></div>
+                <div class="color" style="background: #2980b9;"></div>
+                <div class="color" style="background: #8e44ad;"></div>
+                <div class="color" style="background: #2c3e50;"></div>
+            </div>
+            <div class="row">
+                <div class="color" style="background: #f1c40f;"></div>
+                <div class="color" style="background: #e67e22;"></div>
+                <div class="color" style="background: #e74c3c;"></div>
+                <div class="color" style="background: #ecf0f1;"></div>
+                <div class="color" style="background: #95a5a6;"></div>
+            </div>
+            <div class="row">
+                <div class="color" style="background: #f39c12;"></div>
+                <div class="color" style="background: #d35400;"></div>
+                <div class="color" style="background: #c0392b;"></div>
+                <div class="color" style="background: #bdc3c7;"></div>
+                <div class="color" style="background: #7f8c8d;"></div>
+            </div>
+        </div>
+
+        <script src="http://thedanyaal.com/js/jquery.js" type="text/javascript"></script>
+        <script type="text/javascript">
+
+            $('button').click(function() {
+                $('.menu').css('display', 'block');
+            });
+
+            var color = '#';
+            $('.color').click(function() {
+                color = $(this).css('background');
+                console.log(color);
+            });
+        </script>
+    </body>
+</html>
