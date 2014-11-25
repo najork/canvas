@@ -1,8 +1,5 @@
-quiet-mercenary
-===============
-
 ~ Canvas ~
----------------
+===============
 Canvas is an interactive coloring "book" that utilizes data from a Microsoft
 Kinect sensor to control a projected image on a flexible surface. Canvas
 enables users to interact with and draw on the surface via their hands (and
@@ -14,7 +11,7 @@ converts the raw Kinect data into real-time events.
 Made possible using Ubi Displays software (found at https://code.google.com/p/ubidisplays)
 
 
-Project Abstract
+Abstract
 ---------------
 Autism is a neurological disorder that debilitates a person’s ability to
 communicate and interact in a social setting. People with autism have special
@@ -56,10 +53,10 @@ Usage
 
 Authors
 ---------------
-Dustin Bui
-Maximilian Najork
-Zachary Nowicki
-Danyaal Rangwala
+Dustin Bui  
+Maximilian Najork  
+Zachary Nowicki  
+Danyaal Rangwala  
 
 EECS 481 Section 007 Group 3
 
