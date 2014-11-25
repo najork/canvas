@@ -45,8 +45,8 @@ canvas {
     position: absolute;
     left: 5%;
     bottom: 5%;
-    width: 200px;
-    height: 200px;
+    width: 125px;
+    height: 125px;
     border-radius: 50%;
     background: #FFE90D;
     text-align: center;
@@ -54,29 +54,30 @@ canvas {
     opacity: 0.5;
 }
 #backButton img {
-    margin-top: 25px;
+    margin-top: 23px;
 }
 #colorMenuButton {
     position: absolute;
     left: 5%;
     bottom: 5%;
-    width: 200px;
-    height: 200px;
+    width: 125px;
+    height: 125px;
     border-radius: 50%;
     background: #000000;
     text-align: center;
     cursor: pointer;
-    opacity: 0.5;
+    border: solid 2px black;
+    opacity: 1.0;
 }
 #colorMenuButton img {
-    margin-top: 25px;
+    margin-top: 23px;
 }
 #mainMenuButton {
     position: absolute;
     right: 5%;
     bottom: 5%;
-    width: 200px;
-    height: 200px;
+    width: 100px;
+    height: 100px;
     border-radius: 50%;
     background: #0068FF;
     text-align: center;
@@ -84,9 +85,11 @@ canvas {
     opacity: 0.5;
 }
 #mainMenuButton img {
-    margin-top: 25px;
+    margin-top: 15px;
 }
 #mainMenu {
+    margin-left: auto;
+    margin-right: auto;
     text-align: center;
     display: none;
 }
@@ -107,6 +110,5 @@ canvas {
     top: 10%;
     width: 20%;
     font-size: 3em;
-    color: white;
-    text-shadow: 0 0 0.3em white;
+    color: black;
 }

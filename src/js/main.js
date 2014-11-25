@@ -19,12 +19,12 @@ var hexDigits = new Array
 var cur_page = "canvas";
 
 /* Current color being used */
-cur_color = '#000000';
+var cur_color = '#000000';
 
 /* Refresh rate of the Microsoft Kinect (30 Hz) */
 var fps = 30;
 /* Number of consecutive frames an interaction has occurred */
-frame_count = 0;
+var frame_count = 0;
 /* Total distance between each consecutive point of interaction */
 var total_distance = 0;
 
@@ -47,8 +47,8 @@ $(document).ready(function() {
     /* Wait for user interaction */
     Authority.request("KinectLowestPointCube", {
     relativeto      : Surface.Name,
-    surface_zoffset : 0.038,             // Offset to begin accepting points (in meters)
-    height          : 0.04,             // Offset to stop accepting points (in meters)
+    surface_zoffset : 0.038,            // Offset to begin accepting points (in meters)
+    height          : 0.048,            // Offset to stop accepting points (in meters)
     callback        : "run",            // Function to pass return data from KinectLowestPointCube
     point_limit     : 50,               // Max points to accept
     sendemptyframes : true,             // Callback even if no inputs
