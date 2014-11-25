@@ -32,8 +32,10 @@ var total_distance = 0;
 var cur_x = -1;
 var cur_y = -1;
 
-$(document).ready(function() {
+/* Threshold number of adjacent points for valid interaction */
+var min_adj = 40;
 
+$(document).ready(function() {
     /* Canvas element */
     c = document.getElementById("myCanvas");
     context = c.getContext("2d");
@@ -117,6 +119,19 @@ function seconds_to_frames(seconds) {
 }
 
 /**
+ * Convert seconds to frames based on the refresh rate of the Microsoft
+ * Kinect (30 Hz)
+ *
+ * @param {number} pointList The set of interaction points returned by the
+ * Kinect
+ * @return {boolean} True if number of points registered together is greater
+ * than min_adj
+ */
+function is_valid_interaction(pointList) {
+    return pointList.length > min_adj;
+}
+
+/**
  * Generate a random color
  *
  * @return {string} A hexadecimal representation of a color
@@ -144,6 +159,8 @@ function click_event(pointList) {
     /* Get current position */
     refresh_pos(pointList);
 
+    // TODO: fix distance logic
+
     /* Get distance between last and current position */
     var distance = Math.sqrt(Math.pow((last_x + cur_x), 2) +
         Math.pow((last_y + cur_y), 2));
@@ -152,7 +169,7 @@ function click_event(pointList) {
         pixel_x = cur_x * -1 * c.width;
         pixel_y = cur_y * c.height;
 
-        // TODO: need to make this work with back button element that was added
+        // TODO: need to make this work with back button element that was added, evaluate overall logic
 
         // TODO: change to color menu
         /* Defines what clicking on colorMenuButton does */
@@ -219,36 +236,39 @@ function click_event(pointList) {
  * Kinect
  */
 function run_canvas(pointList) {
-    /* More than 40 points registered together */
-    if (pointList.length > 40) {
-            refresh_pos(pointList);
+    if (is_valid_interaction(pointList)) {
+        refresh_pos(pointList);
 
-            pixel_x = cur_x * -1 * c.width;
-            pixel_y = cur_y * c.height;
+        pixel_x = cur_x * -1 * c.width;
+        pixel_y = cur_y * c.height;
 
-            click_event(pointList);
+        click_event(pointList);
 
-            context.beginPath();
-            context.arc(pixel_x, pixel_y, 15, 0, 2*Math.PI);
-            context.closePath();
-            context.strokeStyle = cur_color;
-            context.fillStyle = cur_color;
-            context.fill();
+        context.beginPath();
+        context.arc(pixel_x, pixel_y, 15, 0, 2*Math.PI);
+        context.closePath();
+        context.strokeStyle = cur_color;
+        context.fillStyle = cur_color;
+        context.fill();
 
-            frame_count++;
+        frame_count++;
     }
     else {
         frame_count = 0;
     }
 }
 
+/**
+ * Block to execute color menu functionality of canvas
+ *
+ * @param {number} pointList The set of interaction points returned by the
+ * Kinect
+ */
 function run_cmenu(pointList) {
-    /* More than 40 points registered together */
-    if (pointList.length > 40) {
-            refresh_pos(pointList);
-
-            click_event(pointList);
-            frame_count++;
+    if (is_valid_interaction(pointList)) {
+        refresh_pos(pointList);
+        click_event(pointList);
+        frame_count++;
     }   else {
         frame_count = 0;
     }
