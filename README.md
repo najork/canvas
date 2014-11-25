@@ -1,8 +1,5 @@
-quiet-mercenary
-===============
-
 ~ Canvas ~
----------------
+===============
 Canvas is an interactive coloring "book" that utilizes data from a Microsoft
 Kinect sensor to control a projected image on a flexible surface. Canvas
 enables users to interact with and draw on the surface via their hands (and
