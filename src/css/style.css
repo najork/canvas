@@ -1,9 +1,112 @@
+html {
+    overflow: hidden;
+    background-color: black;
+    font-family: 'Rajdhani', sans-serif;
+}
 body {
-    text-align: center;
+
+    overflow: hidden;
+    margin: 0 auto;
+    padding: 0;
+    background-color: white;
+}
+canvas {
+    border: 1px solid #000000;
+    width: 600px;
+    height: 600px;
+}
+.menu {
+    width: 1000px;
+    height: 400px;
+    display: none;
+}
+.menu .row {
+    height: 100px;
+    margin-bottom: 5px;
+}
+.menu .row .color {
+    width: 150px;
+    height: 100%;
+    display: inline-block;
+    margin: 5px;
 }
 
-canvas {
-     border: 1px solid #000000;
-     width: 600px;
-     height: 600px;
+#border {
+    position: fixed;
+    width: 790px;
+    height: 590px;
+    padding: 0;
+    margin: 0;
+    top: 0;
+    left: 0;
+    border: solid white 5px;
+}
+#backButton {
+    position: absolute;
+    left: 5%;
+    bottom: 5%;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: #FFE90D;
+    text-align: center;
+    cursor: pointer;
+    opacity: 0.5;
+}
+#backButton img {
+    margin-top: 25px;
+}
+#colorMenuButton {
+    position: absolute;
+    left: 5%;
+    bottom: 5%;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: #000000;
+    text-align: center;
+    cursor: pointer;
+    opacity: 0.5;
+}
+#colorMenuButton img {
+    margin-top: 25px;
+}
+#mainMenuButton {
+    position: absolute;
+    right: 5%;
+    bottom: 5%;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: #0068FF;
+    text-align: center;
+    cursor: pointer;
+    opacity: 0.5;
+}
+#mainMenuButton img {
+    margin-top: 25px;
+}
+#mainMenu {
+    text-align: center;
+    display: none;
+}
+#mainMenu div {
+    margin-bottom: 20px;
+    border: 1px solid black;
+    border-radius: 5px;
+    padding: 5px;
+    width: 200px;
+    cursor: pointer;
+}
+#mainMenu div:hover {
+    background: #bdc3c7;
+}
+#debug {
+    position: absolute;
+    left: 70%;
+    top: 10%;
+    width: 20%;
+    font-size: 3em;
+    color: white;
+    text-shadow: 0 0 0.3em white;
 }
