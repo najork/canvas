@@ -41,15 +41,6 @@
                 left: 0;
                 border: solid white 5px;
             }
-            #count {
-                position: absolute;
-                left: 70%;
-                top: 10%;
-                width:20%;
-                font-size: 9em;
-                color: white;
-                text-shadow: 0 0 0.3em white;
-            }
             #backButton {
                 position: absolute;
                 left: 5%;
@@ -110,6 +101,15 @@
             #mainMenu div:hover {
                 background: #bdc3c7;
             }
+            #debug {
+                position: absolute;
+                left: 70%;
+                top: 10%;
+                width: 20%;
+                font-size: 3em;
+                color: white;
+                text-shadow: 0 0 0.3em white;
+            }
         </style>
 
         <script src="js/jquery-1.8.2.js" type="text/javascript"></script>
@@ -120,7 +120,7 @@
     <body>
         <div id="border"></div>
         <canvas id="myCanvas"></canvas>
-        <div id="count"></div>
+        <div id="debug"></div>
 
         <div id="backButton">
             <img src="icons/back.png" width="150" height="150">
