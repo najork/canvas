@@ -10,27 +10,27 @@
  * @author Dustin Bui, Maximilian Najork, Zachary Nowicki, Danyaal Rangwala
  */
 
-var debug = false;
+var debug = true;
 
 var hexDigits = new Array
         ("0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f");
 
 /* Current page being displayed */
-var cur_page = "canvas";
+cur_page = "canvas";
 
 /* Current color being used */
-var cur_color = '#000000';
+cur_color = '#000000';
 
 /* Refresh rate of the Microsoft Kinect (30 Hz) */
 var fps = 30;
 /* Number of consecutive frames an interaction has occurred */
-var frame_count = 0;
+frame_count = 0;
 /* Total distance between each consecutive point of interaction */
 var total_distance = 0;
 
 /* Average position of the current interaction */
-var cur_x = -1;
-var cur_y = -1;
+cur_x = -1;
+cur_y = -1;
 
 /* Threshold number of adjacent points for valid interaction */
 var min_adj = 40;
@@ -47,8 +47,8 @@ $(document).ready(function() {
     /* Wait for user interaction */
     Authority.request("KinectLowestPointCube", {
     relativeto      : Surface.Name,
-    surface_zoffset : 0.038,            // Offset to begin accepting points (in meters)
-    height          : 0.048,            // Offset to stop accepting points (in meters)
+    surface_zoffset : 0.042,             // Offset to begin accepting points (in meters)
+    height          : 0.045,             // Offset to stop accepting points (in meters)
     callback        : "run",            // Function to pass return data from KinectLowestPointCube
     point_limit     : 50,               // Max points to accept
     sendemptyframes : true,             // Callback even if no inputs
@@ -66,11 +66,6 @@ for(var i = 1; i < coords.length; ++i) {
 
 /** Run main canvas loop */
 function run(pointList) {
-    /* Print debug info if debug mode enabled */
-    if (debug) {
-        $('#debug').text("frame_count: " + frame_count + "\ncur_color: " + cur_color);
-    }
-
     switch(cur_page) {
         case "canvas":
             run_canvas(pointList);
@@ -143,6 +138,11 @@ function random_color() {
         color += letters[Math.floor(Math.random() * 16)];
     }
     return color;
+}
+
+function random_size(num) {
+	var size = Math.random() * num;
+	return size;
 }
 
 /**
@@ -243,9 +243,14 @@ function run_canvas(pointList) {
         pixel_y = cur_y * c.height;
 
         click_event(pointList);
+		
+		var size = random_size(30) + 5;
+		var arc = 2*Math.PI;
+		
+		context.globalAlpha = random_size(1);
 
         context.beginPath();
-        context.arc(pixel_x, pixel_y, 15, 0, 2*Math.PI);
+        context.arc(pixel_x, pixel_y, size, 0, arc);
         context.closePath();
         context.strokeStyle = cur_color;
         context.fillStyle = cur_color;
