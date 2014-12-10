@@ -101,6 +101,7 @@ $(document).ready(function() {
         var rgb = $(this).css('background');
         CUR_COLOR = $(this).attr('value');
         $('#colorMenuButton').css('background', rgb);
+        $('#colorMenuButton img').attr("src", "icons/back.png");
         IS_ERASE = false;
         FRAME_COUNT = 0;
     });
@@ -119,6 +120,7 @@ $(document).ready(function() {
             case "color_menu":
                 $('.menu').hide();
                 $('#myCanvas').show();
+                $('#colorMenuButton img').attr("src", "icons/brush.png");
                 $('#eraserButton').hide();
                 $('#mainMenuButton').show();
                 CUR_PAGE = "canvas";
