@@ -82,12 +82,6 @@ $(document).ready(function() {
         CUR_PAGE = "canvas";
     });
 
-    /* Defines loadButton click event */
-    $('#loadButton').click(function() {
-        FRAME_COUNT = 0;
-        $('#loadInput').trigger('click');
-    });
-
     /* Defines clearButton click event */
     $('#clearButton').click(function() {
         context.clearRect(0,0, c.width, c.height);
