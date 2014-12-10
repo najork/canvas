@@ -112,3 +112,15 @@ canvas {
     font-size: 3em;
     color: black;
 }
+
+#saveSuccessBanner {
+    position: absolute;
+    top: 1%;
+    left: 40%;
+    width: 20%;
+    font-size: 3em;
+    color: #000;
+    background-color: #2ecc71;
+    visibility: hidden;
+    border: 1px solid #000;
+}

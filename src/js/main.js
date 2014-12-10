@@ -79,7 +79,12 @@ $(document).ready(function() {
         FRAME_COUNT = 0;
         var dataURL = c.toDataURL("image/png");
         this.href = dataURL;
-        CUR_PAGE = "canvas";
+        $('#saveSuccessBanner').css('visibility', 'visible');
+        setTimeout(function () {
+            // this code will run later;
+            $('#saveSuccessBanner').css('visibility', 'hidden');
+            CUR_PAGE = "canvas";
+        }, 750);
     });
 
     /* Defines clearButton click event */
