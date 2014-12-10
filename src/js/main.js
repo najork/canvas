@@ -36,6 +36,8 @@ cur_y = -1;
 /* Threshold number of adjacent points for valid interaction */
 var min_adj = 40;
 
+var seconds_to_click = 1;
+
 $(document).ready(function() {
     /* Canvas element */
     c = document.getElementById("myCanvas");
@@ -274,7 +276,7 @@ function click_event(pointList) {
     var distance = Math.sqrt(Math.pow((last_x + cur_x), 2) +
         Math.pow((last_y + cur_y), 2));
 
-    if (frame_count >= seconds_to_frames(2)) {
+    if (frame_count >= seconds_to_frames(seconds_to_click)) {
         pixel_x = cur_x * -1 * c.width;
         pixel_y = cur_y * c.height;
 
