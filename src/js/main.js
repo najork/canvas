@@ -85,6 +85,7 @@ $(document).ready(function() {
     /* Defines clearButton click event */
     $('#clearButton').click(function() {
         context.clearRect(0,0, c.width, c.height);
+        CUR_COLOR = '#000000';
         $('#colorMenuButton').trigger('click');
     });
 
