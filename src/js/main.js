@@ -149,10 +149,10 @@ function run(pointList) {
             run_canvas(pointList);
             break;
         case "color_menu":
-            run_cmenu(pointList);
+            run_menu(pointList);
             break;
         case "main_menu":
-            run_mmenu(pointList);
+            run_menu(pointList);
             break;
         default:
             break;
@@ -322,28 +322,12 @@ function run_canvas(pointList) {
 }
 
 /**
- * Block to execute color menu functionality of canvas
+ * Block to execute menu functionality of canvas
  *
  * @param {number} pointList The set of interaction points returned by the
  * Kinect
  */
-function run_cmenu(pointList) {
-    if (is_valid_interaction(pointList)) {
-        refresh_pos(pointList);
-        click_event(pointList);
-        frame_count++;
-    } else {
-        frame_count = 0;
-    }
-}
-
-/**
- * Block to execute main menu functionality of canvas
- *
- * @param {number} pointList The set of interaction points returned by the
- * Kinect
- */
-function run_mmenu(pointList) {
+function run_menu(pointList) {
     if (is_valid_interaction(pointList)) {
         refresh_pos(pointList);
         click_event(pointList);
