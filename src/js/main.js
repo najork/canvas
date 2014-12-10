@@ -10,7 +10,7 @@
  * @author Dustin Bui, Maximilian Najork, Zachary Nowicki, Danyaal Rangwala
  */
 
-var debug = true;
+var debug = false;
 
 var hexDigits = new Array
         ("0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f");
@@ -21,6 +21,7 @@ cur_page = "canvas";
 /* Current color being used */
 cur_color = '#000000';
 
+isErasing = false;
 /* Refresh rate of the Microsoft Kinect (30 Hz) */
 var fps = 30;
 /* Number of consecutive frames an interaction has occurred */
@@ -42,6 +43,91 @@ $(document).ready(function() {
     /* Width and height of the canvas */
     c.width = window.innerWidth;
     c.height = window.innerHeight;
+
+        /* Defines what clicking on mainMenuButton does */
+    $('#mainMenuButton').click(function() {
+        frame_count = 0;
+        $('#myCanvas').hide();
+        $('#colorMenuButton').hide();
+        $('#backButton').show();
+        $('#mainMenu').show();
+        $('#mainMenuButton').hide();
+        cur_page = "main_menu";
+    });
+
+    /* Defines what clicking on backButton does */
+    $('#backButton').click(function() {
+        frame_count = 0;
+
+        // TODO - IMPLEMENT
+        $('#colorMenuButton').trigger('click');
+        $('#colorMenuButton').show();
+    });
+
+    $('#saveButton').click(function() {
+        frame_count = 0;
+        var dataURL = c.toDataURL("image/png");
+        this.href = dataURL;
+        cur_page = "canvas";
+    });
+
+    $('#loadButton').click(function() {
+        frame_count = 0;
+        $('#loadInput').trigger('click');
+    });
+
+    $('#clearButton').click(function() {
+        context.clearRect(0,0, c.width, c.height);
+        $('#colorMenuButton').trigger('click');
+    });
+
+    $('#eraserButton').click(function() {
+        isErasing = true;
+        frame_count = 0;
+        $('#colorMenuButton').trigger('click');
+    });
+
+    /* Defines what selecting a color does */
+    $('.color').click(function() {
+        var rgb = $(this).css('background');
+        cur_color = $(this).attr('value');
+        $('#colorMenuButton').css('background', rgb);
+        isErasing = false;
+        frame_count = 0;
+    });
+
+        /* Defines what clicking on colorMenuButton does */
+    $('#colorMenuButton').click(function() {
+        frame_count = 0;
+        switch(cur_page) {
+            case "canvas":
+                $('#myCanvas').hide();
+                $('#mainMenuButton').hide();
+                $('#eraserButton').show();
+                $('.menu').show();
+                cur_page = "color_menu";
+                break;
+            case "color_menu":
+                $('.menu').hide();
+                $('#myCanvas').show();
+                $('#eraserButton').hide();
+                $('#mainMenuButton').show();
+                cur_page = "canvas";
+                break;
+            case "main_menu":
+                $('#mainMenu').hide();
+                $('#myCanvas').show();
+                $('#mainMenuButton').show();
+                $('#backButton').hide();
+                $('#colorMenuButton').show();
+                $('#eraserButton').hide();
+                cur_page = "canvas";
+                break;
+            default:
+                break;
+        }
+    });
+
     fade_border();
 
     /* Wait for user interaction */
@@ -55,14 +141,6 @@ $(document).ready(function() {
     });
 
 });
-
-/* Draw on the canvas */
-for(var i = 1; i < coords.length; ++i) {
-    context = c.getContext("2d");
-    context.moveTo(coords[i-1].x, coords[i-1].y);
-    context.lineTo(coords[i].x,coords[i].y);
-    context.stroke();
-}
 
 /** Run main canvas loop */
 function run(pointList) {
@@ -79,6 +157,30 @@ function run(pointList) {
         default:
             break;
     }
+}
+
+function readURL(input) {
+    /* Should work, but permissions issue between Windows and Ubi */
+    // if (input.files && input.files[0]) {
+    //     $('#colorMenuButton').trigger('click');
+    //     var img = new Image;
+    //     img.src = URL.createObjectURL(input.files[0]);
+    //     console.log('URL.createObjectURL');
+    //     img.onload = function() {
+    //     console.log('hi');
+    //     context.drawImage(img,0,0);
+    // }
+    var fileReader = new FileReader();
+    fileReader.onloadend = function (event) {
+        var img = new Image;
+        img.src = event.target.result;
+        img.onload = function() {
+            console.log('hi');
+            context.drawImage(img,0,0);
+            $('#colorMenuButton').trigger('click');
+        }
+    };
+    fileReader.readAsDataURL(input.files[0]);
 }
 
 /** Draw and fade border on page load */
@@ -100,6 +202,13 @@ function refresh_pos(pointList) {
     cur_x = comp_axis_avg(pointList, 0).toPrecision(3);
     cur_y = comp_axis_avg(pointList, 1).toPrecision(3);
     cur_z = comp_axis_avg(pointList, 2).toPrecision(3);
+}
+
+function saveImage() {
+    var dataURL = c.toDataURL("image/png");
+    c.src = dataURL;
+
+    localStorage.setItem("elephant", dataURL);
 }
 
 /**
@@ -141,8 +250,8 @@ function random_color() {
 }
 
 function random_size(num) {
-	var size = Math.random() * num;
-	return size;
+    var size = Math.random() * num;
+    return size;
 }
 
 /**
@@ -169,62 +278,6 @@ function click_event(pointList) {
         pixel_x = cur_x * -1 * c.width;
         pixel_y = cur_y * c.height;
 
-        // TODO: need to make this work with back button element that was added, evaluate overall logic
-
-        // TODO: change to color menu
-        /* Defines what clicking on colorMenuButton does */
-        $('#colorMenuButton').click(function() {
-            frame_count = 0;
-            switch(cur_page) {
-                case "canvas":
-                    $('#myCanvas').hide();
-                    $('#mainMenuButton').hide();
-                    $('.menu').show();
-                    cur_page = "color_menu";
-                    break;
-                case "color_menu":
-                    $('.menu').hide();
-                    $('#myCanvas').show();
-                    $('#mainMenuButton').show();
-                    cur_page = "canvas";
-                    break;
-                case "main_menu":
-                    $('#mainMenu').hide();
-                    $('#myCanvas').show();
-                    $('#mainMenuButton').show();
-                    cur_page = "canvas";
-                    break;
-                default:
-                    break;
-            }
-        });
-
-        /* Defines what clicking on mainMenuButton does */
-        $('#mainMenuButton').click(function() {
-            frame_count = 0;
-            $('#myCanvas').hide();
-            $('#mainMenu').show();
-            $('#mainMenuButton').hide();
-            cur_page = "main_menu";
-        });
-
-        /* Defines what clicking on backButton does */
-        $('#backButton').click(function() {
-            frame_count = 0;
-
-            // TODO - IMPLEMENT
-
-            cur_page = "canvas";
-        });
-
-        /* Defines what selecting a color does */
-        $('.color').click(function() {
-            var rgb = $(this).css('background');
-            cur_color = $(this).attr('value');
-            $('#colorMenuButton').css('background', rgb);
-            frame_count = 0;
-        });
-
         $(document.elementFromPoint(pixel_x, pixel_y)).click();
     }
 }
@@ -243,11 +296,17 @@ function run_canvas(pointList) {
         pixel_y = cur_y * c.height;
 
         click_event(pointList);
-		
-		var size = random_size(30) + 5;
-		var arc = 2*Math.PI;
-		
-		context.globalAlpha = random_size(1);
+
+        var size = random_size(30) + 5;
+        var arc = 2*Math.PI;
+
+        if (!isErasing) {
+            context.globalAlpha = random_size(1);
+        } else {
+            cur_color = 'white';
+            context.globalAlpha = 1.0;
+            size = 30;
+        }
 
         context.beginPath();
         context.arc(pixel_x, pixel_y, size, 0, arc);
@@ -257,8 +316,7 @@ function run_canvas(pointList) {
         context.fill();
 
         frame_count++;
-    }
-    else {
+    } else {
         frame_count = 0;
     }
 }
@@ -274,7 +332,7 @@ function run_cmenu(pointList) {
         refresh_pos(pointList);
         click_event(pointList);
         frame_count++;
-    }   else {
+    } else {
         frame_count = 0;
     }
 }
