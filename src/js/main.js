@@ -336,3 +336,19 @@ function run_cmenu(pointList) {
         frame_count = 0;
     }
 }
+
+/**
+ * Block to execute main menu functionality of canvas
+ *
+ * @param {number} pointList The set of interaction points returned by the
+ * Kinect
+ */
+function run_mmenu(pointList) {
+    if (is_valid_interaction(pointList)) {
+        refresh_pos(pointList);
+        click_event(pointList);
+        frame_count++;
+    } else {
+        frame_count = 0;
+    }
+}
