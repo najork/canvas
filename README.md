@@ -25,6 +25,8 @@ issues in children with ASD by allowing them to collaborate with their parents,
 caretakers, and friends, and engage in artistic expression on an arbitrarily
 large scale.
 
+Compatible with Windows 7 and 8.
+
 
 Set Up
 ---------------
@@ -49,6 +51,12 @@ Usage
 * Access the color menu from the canvas by interacting with the circular icon with a paintbrush emblem in it
 * Access the main menu from the canvas by interacting with the circular icon with a gear emblem in it
 * Return to the canvas from either of the menus by interacting with the circular icon with a left-facing arrow in it
+
+Debug
+---------------
+The debugging interface for Ubi can be accessed by pointing your web browser to
+http://localhost:9222. Note that the debugger's functionality has only been
+tested with Google Chrome; other web browsers may not be supported.
 
 
 Authors
