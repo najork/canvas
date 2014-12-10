@@ -8,7 +8,9 @@ application built using HTML, Javascript, and JQuery, while back-end support is
 provided by Ubi Displays, an open-source package that provides an API which
 converts the raw Kinect data into real-time events.
 
-Made possible using Ubi Displays software (found at https://code.google.com/p/ubidisplays)
+Made possible using Ubi Displays software (found at https://code.google.com/p/ubidisplays).
+
+Compatible with Windows 7 and 8.
 
 
 Abstract
@@ -24,8 +26,6 @@ Canvas is designed to promote social interaction and alleviate proprioceptive
 issues in children with ASD by allowing them to collaborate with their parents,
 caretakers, and friends, and engage in artistic expression on an arbitrarily
 large scale.
-
-Compatible with Windows 7 and 8.
 
 
 Set Up
