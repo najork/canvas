@@ -56,7 +56,7 @@ $(document).ready(function() {
     c.width = window.innerWidth;
     c.height = window.innerHeight;
 
-    /* Defines what clicking on mainMenuButton does */
+    /* Defines mainMenuButton click event */
     $('#mainMenuButton').click(function() {
         FRAME_COUNT = 0;
         $('#myCanvas').hide();
@@ -67,13 +67,14 @@ $(document).ready(function() {
         CUR_PAGE = "main_menu";
     });
 
-    /* Defines what clicking on backButton does */
+    /* Defines backButton click event */
     $('#backButton').click(function() {
         FRAME_COUNT = 0;
         $('#colorMenuButton').trigger('click');
         $('#colorMenuButton').show();
     });
 
+    /* Defines saveButton click event */
     $('#saveButton').click(function() {
         FRAME_COUNT = 0;
         var dataURL = c.toDataURL("image/png");
@@ -81,23 +82,26 @@ $(document).ready(function() {
         CUR_PAGE = "canvas";
     });
 
+    /* Defines loadButton click event */
     $('#loadButton').click(function() {
         FRAME_COUNT = 0;
         $('#loadInput').trigger('click');
     });
 
+    /* Defines clearButton click event */
     $('#clearButton').click(function() {
         context.clearRect(0,0, c.width, c.height);
         $('#colorMenuButton').trigger('click');
     });
 
+    /* Defines eraseButton click event */
     $('#eraserButton').click(function() {
         IS_ERASE = true;
         FRAME_COUNT = 0;
         $('#colorMenuButton').trigger('click');
     });
 
-    /* Defines what selecting a color does */
+    /* Defines color selection event */
     $('.color').click(function() {
         var rgb = $(this).css('background');
         CUR_COLOR = $(this).attr('value');
@@ -106,7 +110,7 @@ $(document).ready(function() {
         FRAME_COUNT = 0;
     });
 
-    /* Defines what clicking on colorMenuButton does */
+    /* Defines colorMenuButton click event */
     $('#colorMenuButton').click(function() {
         FRAME_COUNT = 0;
         switch(CUR_PAGE) {
@@ -143,8 +147,8 @@ $(document).ready(function() {
     /* Wait for user interaction */
     Authority.request("KinectLowestPointCube", {
     relativeto      : Surface.Name,
-    surface_zoffset : 0.042,             // Offset to begin accepting points (in meters)
-    height          : 0.045,             // Offset to stop accepting points (in meters)
+    surface_zoffset : 0.042,            // Offset to begin accepting points (in meters)
+    height          : 0.045,            // Offset to stop accepting points (in meters)
     callback        : "run",            // Function to pass return data from KinectLowestPointCube
     point_limit     : 50,               // Max points to accept
     sendemptyframes : true,             // Callback even if no inputs
