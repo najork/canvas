@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2014 Dustin Bui, Maximilian Najork, Zachary Nowicki, Danyaal Rangwala
+ * All rights reserved. Licensed under the MIT License. See LICENSE.txt for more information.
+ */
+
 /**
  * ~ Canvas ~
  *
@@ -10,24 +15,15 @@
  * @author Dustin Bui, Maximilian Najork, Zachary Nowicki, Danyaal Rangwala
  */
 
-var debug = false;
-
-var hexDigits = new Array
-        ("0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f");
-
 /* Current page being displayed */
 cur_page = "canvas";
-
 /* Current color being used */
 cur_color = '#000000';
+/* Brush erase state */
+is_erasing = false;
 
-isErasing = false;
-/* Refresh rate of the Microsoft Kinect (30 Hz) */
-var fps = 30;
 /* Number of consecutive frames an interaction has occurred */
 frame_count = 0;
-/* Total distance between each consecutive point of interaction */
-var total_distance = 0;
 
 /* Average position of the current interaction */
 cur_x = -1;
@@ -35,7 +31,9 @@ cur_y = -1;
 
 /* Threshold number of adjacent points for valid interaction */
 var min_adj = 40;
-
+/* Refresh rate of the Microsoft Kinect (30 Hz) */
+var fps = 30;
+/* Length of interaction to trigger click event */
 var seconds_to_click = 1;
 
 $(document).ready(function() {
@@ -84,7 +82,7 @@ $(document).ready(function() {
     });
 
     $('#eraserButton').click(function() {
-        isErasing = true;
+        is_erasing = true;
         frame_count = 0;
         $('#colorMenuButton').trigger('click');
     });
@@ -94,7 +92,7 @@ $(document).ready(function() {
         var rgb = $(this).css('background');
         cur_color = $(this).attr('value');
         $('#colorMenuButton').css('background', rgb);
-        isErasing = false;
+        is_erasing = false;
         frame_count = 0;
     });
 
@@ -302,7 +300,7 @@ function run_canvas(pointList) {
         var size = random_size(30) + 5;
         var arc = 2*Math.PI;
 
-        if (!isErasing) {
+        if (!is_erasing) {
             context.globalAlpha = random_size(1);
         } else {
             cur_color = 'white';
