@@ -99,6 +99,8 @@ $(document).ready(function() {
         IS_ERASE = true;
         FRAME_COUNT = 0;
         $('#colorMenuButton').trigger('click');
+        $('#colorMenuButton img').attr("src", "icons/eraser.png");
+        $('#colorMenuButton').css('background', '#fefefe');
     });
 
     /* Defines color selection event */
