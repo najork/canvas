@@ -91,6 +91,7 @@ $(document).ready(function() {
     $('#clearButton').click(function() {
         context.clearRect(0,0, c.width, c.height);
         CUR_COLOR = '#000000';
+        $('#colorMenuButton').css('background', CUR_COLOR);
         $('#colorMenuButton').trigger('click');
     });
 
