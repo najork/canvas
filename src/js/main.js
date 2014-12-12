@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) 2014 Dustin Bui, Maximilian Najork, Zachary Nowicki, Danyaal Rangwala
+ * All rights reserved. Licensed under the MIT License. See LICENSE.txt for more information.
+ */
+
 /**
  * ~ Canvas ~
  *
@@ -10,31 +15,38 @@
  * @author Dustin Bui, Maximilian Najork, Zachary Nowicki, Danyaal Rangwala
  */
 
-var debug = false;
-
-var hexDigits = new Array
-        ("0","1","2","3","4","5","6","7","8","9","a","b","c","d","e","f");
+////////////////////////////////
+/* -- CANVAS STATE GLOBALS -- */
+////////////////////////////////
 
 /* Current page being displayed */
-cur_page = "canvas";
-
+CUR_PAGE = "canvas";
 /* Current color being used */
-cur_color = '#000000';
+CUR_COLOR = '#000000';
+/* Brush erase state */
+IS_ERASE = false;
 
-isErasing = false;
-/* Refresh rate of the Microsoft Kinect (30 Hz) */
-var fps = 30;
-/* Number of consecutive frames an interaction has occurred */
-frame_count = 0;
-/* Total distance between each consecutive point of interaction */
-var total_distance = 0;
+///////////////////////////////
+/* -- INTERACTION GLOBALS -- */
+///////////////////////////////
 
-/* Average position of the current interaction */
-cur_x = -1;
-cur_y = -1;
+/* Consecutive frames of current interaction */
+FRAME_COUNT = 0;
+/* Average x-coord of current interaction */
+CUR_X = -1;
+/* Average y-coord of current interaction */
+CUR_Y = -1;
 
-/* Threshold number of adjacent points for valid interaction */
-var min_adj = 40;
+/////////////////////////
+/* -- USAGE GLOBALS -- */
+/////////////////////////
+
+/* Minimum adjacent points of valid interaction */
+MIN_ADJ = 40;
+/* Refresh rate of Microsoft Kinect (30 Hz) */
+FPS = 30;
+/* Seconds to trigger click event */
+SECONDS_TO_CLICK = 1;
 
 $(document).ready(function() {
     /* Canvas element */
@@ -44,75 +56,82 @@ $(document).ready(function() {
     c.width = window.innerWidth;
     c.height = window.innerHeight;
 
-        /* Defines what clicking on mainMenuButton does */
+    /* Defines mainMenuButton click event */
     $('#mainMenuButton').click(function() {
-        frame_count = 0;
+        FRAME_COUNT = 0;
         $('#myCanvas').hide();
         $('#colorMenuButton').hide();
         $('#backButton').show();
         $('#mainMenu').show();
         $('#mainMenuButton').hide();
-        cur_page = "main_menu";
+        CUR_PAGE = "main_menu";
     });
 
-    /* Defines what clicking on backButton does */
+    /* Defines backButton click event */
     $('#backButton').click(function() {
-        frame_count = 0;
-
-        // TODO - IMPLEMENT
+        FRAME_COUNT = 0;
         $('#colorMenuButton').trigger('click');
         $('#colorMenuButton').show();
     });
 
+    /* Defines saveButton click event */
     $('#saveButton').click(function() {
-        frame_count = 0;
+        FRAME_COUNT = 0;
         var dataURL = c.toDataURL("image/png");
         this.href = dataURL;
-        cur_page = "canvas";
+        $('#saveSuccessBanner').css('visibility', 'visible');
+        setTimeout(function () {
+            // this code will run later;
+            $('#saveSuccessBanner').css('visibility', 'hidden');
+            CUR_PAGE = "canvas";
+        }, 750);
     });
 
-    $('#loadButton').click(function() {
-        frame_count = 0;
-        $('#loadInput').trigger('click');
-    });
-
+    /* Defines clearButton click event */
     $('#clearButton').click(function() {
         context.clearRect(0,0, c.width, c.height);
+        CUR_COLOR = '#000000';
+        $('#colorMenuButton').css('background', CUR_COLOR);
         $('#colorMenuButton').trigger('click');
     });
 
+    /* Defines eraseButton click event */
     $('#eraserButton').click(function() {
-        isErasing = true;
-        frame_count = 0;
+        IS_ERASE = true;
+        FRAME_COUNT = 0;
         $('#colorMenuButton').trigger('click');
+        $('#colorMenuButton img').attr("src", "icons/eraser.png");
+        $('#colorMenuButton').css('background', '#fefefe');
     });
 
-    /* Defines what selecting a color does */
+    /* Defines color selection event */
     $('.color').click(function() {
         var rgb = $(this).css('background');
-        cur_color = $(this).attr('value');
+        CUR_COLOR = $(this).attr('value');
         $('#colorMenuButton').css('background', rgb);
-        isErasing = false;
-        frame_count = 0;
+        $('#colorMenuButton img').attr("src", "icons/back.png");
+        IS_ERASE = false;
+        FRAME_COUNT = 0;
     });
 
-        /* Defines what clicking on colorMenuButton does */
+    /* Defines colorMenuButton click event */
     $('#colorMenuButton').click(function() {
-        frame_count = 0;
-        switch(cur_page) {
+        FRAME_COUNT = 0;
+        switch(CUR_PAGE) {
             case "canvas":
                 $('#myCanvas').hide();
                 $('#mainMenuButton').hide();
                 $('#eraserButton').show();
                 $('.menu').show();
-                cur_page = "color_menu";
+                CUR_PAGE = "color_menu";
                 break;
             case "color_menu":
                 $('.menu').hide();
                 $('#myCanvas').show();
+                $('#colorMenuButton img').attr("src", "icons/brush.png");
                 $('#eraserButton').hide();
                 $('#mainMenuButton').show();
-                cur_page = "canvas";
+                CUR_PAGE = "canvas";
                 break;
             case "main_menu":
                 $('#mainMenu').hide();
@@ -121,7 +140,7 @@ $(document).ready(function() {
                 $('#backButton').hide();
                 $('#colorMenuButton').show();
                 $('#eraserButton').hide();
-                cur_page = "canvas";
+                CUR_PAGE = "canvas";
                 break;
             default:
                 break;
@@ -133,8 +152,8 @@ $(document).ready(function() {
     /* Wait for user interaction */
     Authority.request("KinectLowestPointCube", {
     relativeto      : Surface.Name,
-    surface_zoffset : 0.042,             // Offset to begin accepting points (in meters)
-    height          : 0.045,             // Offset to stop accepting points (in meters)
+    surface_zoffset : 0.042,            // Offset to begin accepting points (in meters)
+    height          : 0.045,            // Offset to stop accepting points (in meters)
     callback        : "run",            // Function to pass return data from KinectLowestPointCube
     point_limit     : 50,               // Max points to accept
     sendemptyframes : true,             // Callback even if no inputs
@@ -144,43 +163,19 @@ $(document).ready(function() {
 
 /** Run main canvas loop */
 function run(pointList) {
-    switch(cur_page) {
+    switch(CUR_PAGE) {
         case "canvas":
             run_canvas(pointList);
             break;
         case "color_menu":
-            run_cmenu(pointList);
+            run_menu(pointList);
             break;
         case "main_menu":
-            run_mmenu(pointList);
+            run_menu(pointList);
             break;
         default:
             break;
     }
-}
-
-function readURL(input) {
-    /* Should work, but permissions issue between Windows and Ubi */
-    // if (input.files && input.files[0]) {
-    //     $('#colorMenuButton').trigger('click');
-    //     var img = new Image;
-    //     img.src = URL.createObjectURL(input.files[0]);
-    //     console.log('URL.createObjectURL');
-    //     img.onload = function() {
-    //     console.log('hi');
-    //     context.drawImage(img,0,0);
-    // }
-    var fileReader = new FileReader();
-    fileReader.onloadend = function (event) {
-        var img = new Image;
-        img.src = event.target.result;
-        img.onload = function() {
-            console.log('hi');
-            context.drawImage(img,0,0);
-            $('#colorMenuButton').trigger('click');
-        }
-    };
-    fileReader.readAsDataURL(input.files[0]);
 }
 
 /** Draw and fade border on page load */
@@ -199,16 +194,16 @@ function comp_axis_avg(values, comp) {
 
 /** Refresh current position of interation */
 function refresh_pos(pointList) {
-    cur_x = comp_axis_avg(pointList, 0).toPrecision(3);
-    cur_y = comp_axis_avg(pointList, 1).toPrecision(3);
-    cur_z = comp_axis_avg(pointList, 2).toPrecision(3);
+    CUR_X = comp_axis_avg(pointList, 0).toPrecision(3);
+    CUR_Y = comp_axis_avg(pointList, 1).toPrecision(3);
+    // CUR_Z = comp_axis_avg(pointList, 2).toPrecision(3);
 }
 
+/** Save the current canvas as a PNG */
 function saveImage() {
     var dataURL = c.toDataURL("image/png");
     c.src = dataURL;
-
-    localStorage.setItem("elephant", dataURL);
+    localStorage.setItem("img", dataURL);
 }
 
 /**
@@ -219,7 +214,7 @@ function saveImage() {
  * @return {number} The number of frames equivalent to the seconds inputted
  */
 function seconds_to_frames(seconds) {
-    return seconds * fps;
+    return seconds * FPS;
 }
 
 /**
@@ -229,10 +224,10 @@ function seconds_to_frames(seconds) {
  * @param {number} pointList The set of interaction points returned by the
  * Kinect
  * @return {boolean} True if number of points registered together is greater
- * than min_adj
+ * than MIN_ADJ
  */
 function is_valid_interaction(pointList) {
-    return pointList.length > min_adj;
+    return pointList.length > MIN_ADJ;
 }
 
 /**
@@ -249,6 +244,12 @@ function random_color() {
     return color;
 }
 
+/**
+ * Generate a random size
+ *
+ * @param {number} Scalar multiple for the random number
+ * @return {number} A random number in the range [0, num)
+ */
 function random_size(num) {
     var size = Math.random() * num;
     return size;
@@ -262,21 +263,15 @@ function random_size(num) {
  */
 function click_event(pointList) {
     /* Store last position */
-    var last_x = cur_x;
-    var last_y = cur_y;
+    var last_x = CUR_X;
+    var last_y = CUR_Y;
 
     /* Get current position */
     refresh_pos(pointList);
 
-    // TODO: fix distance logic
-
-    /* Get distance between last and current position */
-    var distance = Math.sqrt(Math.pow((last_x + cur_x), 2) +
-        Math.pow((last_y + cur_y), 2));
-
-    if (frame_count >= seconds_to_frames(2)) {
-        pixel_x = cur_x * -1 * c.width;
-        pixel_y = cur_y * c.height;
+    if (FRAME_COUNT >= seconds_to_frames(SECONDS_TO_CLICK)) {
+        pixel_x = CUR_X * -1 * c.width;
+        pixel_y = CUR_Y * c.height;
 
         $(document.elementFromPoint(pixel_x, pixel_y)).click();
     }
@@ -292,18 +287,18 @@ function run_canvas(pointList) {
     if (is_valid_interaction(pointList)) {
         refresh_pos(pointList);
 
-        pixel_x = cur_x * -1 * c.width;
-        pixel_y = cur_y * c.height;
+        pixel_x = CUR_X * -1 * c.width;
+        pixel_y = CUR_Y * c.height;
 
         click_event(pointList);
 
         var size = random_size(30) + 5;
         var arc = 2*Math.PI;
 
-        if (!isErasing) {
+        if (!IS_ERASE) {
             context.globalAlpha = random_size(1);
         } else {
-            cur_color = 'white';
+            CUR_COLOR = 'white';
             context.globalAlpha = 1.0;
             size = 30;
         }
@@ -311,44 +306,28 @@ function run_canvas(pointList) {
         context.beginPath();
         context.arc(pixel_x, pixel_y, size, 0, arc);
         context.closePath();
-        context.strokeStyle = cur_color;
-        context.fillStyle = cur_color;
+        context.strokeStyle = CUR_COLOR;
+        context.fillStyle = CUR_COLOR;
         context.fill();
 
-        frame_count++;
+        FRAME_COUNT++;
     } else {
-        frame_count = 0;
+        FRAME_COUNT = 0;
     }
 }
 
 /**
- * Block to execute color menu functionality of canvas
+ * Block to execute menu functionality of canvas
  *
  * @param {number} pointList The set of interaction points returned by the
  * Kinect
  */
-function run_cmenu(pointList) {
+function run_menu(pointList) {
     if (is_valid_interaction(pointList)) {
         refresh_pos(pointList);
         click_event(pointList);
-        frame_count++;
+        FRAME_COUNT++;
     } else {
-        frame_count = 0;
-    }
-}
-
-/**
- * Block to execute main menu functionality of canvas
- *
- * @param {number} pointList The set of interaction points returned by the
- * Kinect
- */
-function run_mmenu(pointList) {
-    if (is_valid_interaction(pointList)) {
-        refresh_pos(pointList);
-        click_event(pointList);
-        frame_count++;
-    } else {
-        frame_count = 0;
+        FRAME_COUNT = 0;
     }
 }
