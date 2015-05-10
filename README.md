@@ -59,8 +59,7 @@ Debug
 The debugging interface for Ubi can be accessed by pointing your web browser to
 http://localhost:9222
 
-Note that the debugger's functionality has only been tested with Google Chrome
-- other web browsers may not be supported.
+Note that the debugger's functionality has only been tested with Google Chrome - other web browsers may not be supported.
 
 
 Authors
