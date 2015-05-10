@@ -57,16 +57,18 @@ Usage
 Debug
 ---------------
 The debugging interface for Ubi can be accessed by pointing your web browser to
-http://localhost:9222. Note that the debugger's functionality has only been
-tested with Google Chrome; other web browsers may not be supported.
+http://localhost:9222
+
+Note that the debugger's functionality has only been tested with Google Chrome
+- other web browsers may not be supported.
 
 
 Authors
 ---------------
-Dustin Bui
-Maximilian Najork
-Zachary Nowicki
-Danyaal Rangwala
+Dustin Bui  
+Maximilian Najork  
+Zachary Nowicki  
+Danyaal Rangwala  
 
-Created for EECS 481 under Professor David Chesney
+Created for EECS 481 under Professor David Chesney  
 University of Michigan College of Engineering
