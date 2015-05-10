@@ -6,7 +6,7 @@
 /**
  * ~ Canvas ~
  *
- * An interactive coloring "book" web application that utilizes data from a
+ * An interactive coloring book web application that utilizes data from a
  * Microsoft Kinect to enable users to draw on a projected surface with their
  * body
  *
@@ -15,16 +15,18 @@
  * @author Dustin Bui, Maximilian Najork, Zachary Nowicki, Danyaal Rangwala
  */
 
+
 ////////////////////////////////
 /* -- CANVAS STATE GLOBALS -- */
 ////////////////////////////////
 
 /* Current page being displayed */
-CUR_PAGE = "canvas";
+CUR_PAGE = 'canvas';
 /* Current color being used */
 CUR_COLOR = '#000000';
 /* Brush erase state */
 IS_ERASE = false;
+
 
 ///////////////////////////////
 /* -- INTERACTION GLOBALS -- */
@@ -37,6 +39,7 @@ CUR_X = -1;
 /* Average y-coord of current interaction */
 CUR_Y = -1;
 
+
 /////////////////////////
 /* -- USAGE GLOBALS -- */
 /////////////////////////
@@ -48,23 +51,28 @@ FPS = 30;
 /* Seconds to trigger click event */
 SECONDS_TO_CLICK = 1;
 
+
+/////////////////////////
+/* -- CANVAS DRIVER -- */
+/////////////////////////
+
 $(document).ready(function() {
     /* Canvas element */
-    c = document.getElementById("myCanvas");
-    context = c.getContext("2d");
+    canvas = document.getElementById('myCanvas');
+    context = canvas.getContext('2d');
     /* Width and height of the canvas */
-    c.width = window.innerWidth;
-    c.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
     /* Defines mainMenuButton click event */
     $('#mainMenuButton').click(function() {
+        CUR_PAGE = 'main_menu';
         FRAME_COUNT = 0;
         $('#myCanvas').hide();
         $('#colorMenuButton').hide();
         $('#backButton').show();
         $('#mainMenu').show();
         $('#mainMenuButton').hide();
-        CUR_PAGE = "main_menu";
     });
 
     /* Defines backButton click event */
@@ -76,22 +84,17 @@ $(document).ready(function() {
 
     /* Defines saveButton click event */
     $('#saveButton').click(function() {
+        CUR_PAGE = 'canvas';
         FRAME_COUNT = 0;
-        var dataURL = c.toDataURL("image/png");
+        var dataURL = canvas.toDataURL('image/png');
         this.href = dataURL;
-        $('#saveSuccessBanner').css('visibility', 'visible');
-        setTimeout(function () {
-            // this code will run later;
-            $('#saveSuccessBanner').css('visibility', 'hidden');
-            CUR_PAGE = "canvas";
-        }, 750);
     });
 
     /* Defines clearButton click event */
     $('#clearButton').click(function() {
-        context.clearRect(0,0, c.width, c.height);
         CUR_COLOR = '#000000';
         $('#colorMenuButton').css('background', CUR_COLOR);
+        context.clearRect(0, 0, canvas.width, canvas.height);
         $('#colorMenuButton').trigger('click');
     });
 
@@ -106,55 +109,57 @@ $(document).ready(function() {
 
     /* Defines color selection event */
     $('.color').click(function() {
-        var rgb = $(this).css('background');
         CUR_COLOR = $(this).attr('value');
-        $('#colorMenuButton').css('background', rgb);
-        $('#colorMenuButton img').attr("src", "icons/back.png");
         IS_ERASE = false;
         FRAME_COUNT = 0;
+        var rgb = $(this).css('background');
+        $('#colorMenuButton').css('background', rgb);
+        $('#colorMenuButton img').attr("src", "icons/back.png");
     });
 
     /* Defines colorMenuButton click event */
     $('#colorMenuButton').click(function() {
         FRAME_COUNT = 0;
         switch(CUR_PAGE) {
-            case "canvas":
+            case 'canvas':
+                CUR_PAGE = 'color_menu';
                 $('#myCanvas').hide();
                 $('#mainMenuButton').hide();
                 $('#eraserButton').show();
                 $('.menu').show();
-                CUR_PAGE = "color_menu";
                 break;
-            case "color_menu":
+            case 'color_menu':
+                CUR_PAGE = 'canvas';
                 $('.menu').hide();
                 $('#myCanvas').show();
                 $('#colorMenuButton img').attr("src", "icons/brush.png");
                 $('#eraserButton').hide();
                 $('#mainMenuButton').show();
-                CUR_PAGE = "canvas";
                 break;
-            case "main_menu":
+            case 'main_menu':
+                CUR_PAGE = 'canvas';
                 $('#mainMenu').hide();
                 $('#myCanvas').show();
                 $('#mainMenuButton').show();
                 $('#backButton').hide();
                 $('#colorMenuButton').show();
                 $('#eraserButton').hide();
-                CUR_PAGE = "canvas";
                 break;
             default:
+                // Should never reach
                 break;
         }
     });
 
+    /* Fade border effect informs user js loaded correctly */
     fade_border();
 
     /* Wait for user interaction */
-    Authority.request("KinectLowestPointCube", {
+    Authority.request('KinectLowestPointCube', {
     relativeto      : Surface.Name,
     surface_zoffset : 0.042,            // Offset to begin accepting points (in meters)
     height          : 0.045,            // Offset to stop accepting points (in meters)
-    callback        : "run",            // Function to pass return data from KinectLowestPointCube
+    callback        : 'run',            // Function to pass return data from KinectLowestPointCube
     point_limit     : 50,               // Max points to accept
     sendemptyframes : true,             // Callback even if no inputs
     });
@@ -164,46 +169,45 @@ $(document).ready(function() {
 /** Run main canvas loop */
 function run(pointList) {
     switch(CUR_PAGE) {
-        case "canvas":
+        case 'canvas':
             run_canvas(pointList);
             break;
-        case "color_menu":
+        case 'color_menu':
             run_menu(pointList);
             break;
-        case "main_menu":
+        case 'main_menu':
             run_menu(pointList);
             break;
         default:
+            // Should never reach
             break;
     }
 }
 
 /** Draw and fade border on page load */
 function fade_border() {
-    $("#border").show().delay(2000).fadeOut(500);
+    $('#border').show().delay(2000).fadeOut(500);
 }
 
 /** Compute average interaction position from set of interactions */
 function comp_axis_avg(values, comp) {
-    var cnt, tot, i;
-    cnt = values.length;
-    tot = i = 0;
-    while (i < cnt) tot+= values[i++][comp];
-    return tot / cnt;
+    var total = 0;
+    for (var i = 0; i < values.length; ++i)
+        total += values[i][comp];
+    return total / values.length;
 }
 
 /** Refresh current position of interation */
 function refresh_pos(pointList) {
     CUR_X = comp_axis_avg(pointList, 0).toPrecision(3);
     CUR_Y = comp_axis_avg(pointList, 1).toPrecision(3);
-    // CUR_Z = comp_axis_avg(pointList, 2).toPrecision(3);
 }
 
 /** Save the current canvas as a PNG */
 function saveImage() {
-    var dataURL = c.toDataURL("image/png");
-    c.src = dataURL;
-    localStorage.setItem("img", dataURL);
+    var dataURL = canvas.toDataURL('image/png');
+    canvas.src = dataURL;
+    localStorage.setItem('img', dataURL);
 }
 
 /**
@@ -238,9 +242,8 @@ function is_valid_interaction(pointList) {
 function random_color() {
     var letters = '0123456789ABCDEF'.split('');
     var color = '#';
-    for (var i = 0; i < 6; i++ ) {
+    for (var i = 0; i < 6; ++i)
         color += letters[Math.floor(Math.random() * 16)];
-    }
     return color;
 }
 
@@ -270,9 +273,8 @@ function click_event(pointList) {
     refresh_pos(pointList);
 
     if (FRAME_COUNT >= seconds_to_frames(SECONDS_TO_CLICK)) {
-        pixel_x = CUR_X * -1 * c.width;
-        pixel_y = CUR_Y * c.height;
-
+        var pixel_x = CUR_X * -1 * canvas.width;
+        var pixel_y = CUR_Y * canvas.height;
         $(document.elementFromPoint(pixel_x, pixel_y)).click();
     }
 }
@@ -286,10 +288,6 @@ function click_event(pointList) {
 function run_canvas(pointList) {
     if (is_valid_interaction(pointList)) {
         refresh_pos(pointList);
-
-        pixel_x = CUR_X * -1 * c.width;
-        pixel_y = CUR_Y * c.height;
-
         click_event(pointList);
 
         var size = random_size(30) + 5;
@@ -298,10 +296,13 @@ function run_canvas(pointList) {
         if (!IS_ERASE) {
             context.globalAlpha = random_size(1);
         } else {
-            CUR_COLOR = 'white';
+            CUR_COLOR = '#ffffff';
             context.globalAlpha = 1.0;
             size = 30;
         }
+
+        var pixel_x = CUR_X * -1 * canvas.width;
+        var pixel_y = CUR_Y * canvas.height;
 
         context.beginPath();
         context.arc(pixel_x, pixel_y, size, 0, arc);
@@ -310,7 +311,7 @@ function run_canvas(pointList) {
         context.fillStyle = CUR_COLOR;
         context.fill();
 
-        FRAME_COUNT++;
+        ++FRAME_COUNT;
     } else {
         FRAME_COUNT = 0;
     }
@@ -326,7 +327,7 @@ function run_menu(pointList) {
     if (is_valid_interaction(pointList)) {
         refresh_pos(pointList);
         click_event(pointList);
-        FRAME_COUNT++;
+        ++FRAME_COUNT;
     } else {
         FRAME_COUNT = 0;
     }
