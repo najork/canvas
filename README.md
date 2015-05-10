@@ -12,6 +12,8 @@ Made possible using Ubi Displays software (found at https://code.google.com/p/ub
 
 Compatible with Windows 7 and 8.
 
+Icons from https://glyphicons.com/
+
 
 Abstract
 ---------------
@@ -46,7 +48,7 @@ Set Up
 Usage
 ---------------
 * On startup, Canvas loads a blank canvas
-* Draw on the canvas via interactions with the screen
+* Draw on the canvas via interactions with the screen (hovering/pressing on a location)
 * Click buttons to access menus and select options by hovering your hand over them for several seconds
 * Access the color menu from the canvas by interacting with the circular icon with a paintbrush emblem in it
 * Access the main menu from the canvas by interacting with the circular icon with a gear emblem in it
@@ -61,11 +63,10 @@ tested with Google Chrome; other web browsers may not be supported.
 
 Authors
 ---------------
-Dustin Bui  
-Maximilian Najork  
-Zachary Nowicki  
-Danyaal Rangwala  
+Dustin Bui
+Maximilian Najork
+Zachary Nowicki
+Danyaal Rangwala
 
-EECS 481 Section 007 Group 3  
+Created for EECS 481 under Professor David Chesney
 University of Michigan College of Engineering
-
