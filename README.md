@@ -10,9 +10,9 @@ converts the raw Kinect data into real-time events.
 
 Made possible using Ubi Displays software (found at https://code.google.com/p/ubidisplays).
 
-Compatible with Windows 7 and 8.
+Icons from GLYPHICONS (found at https://glyphicons.com).
 
-Icons from https://glyphicons.com/
+Compatible with Windows 7 and 8.
 
 
 Abstract
